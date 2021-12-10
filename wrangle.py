@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+import sklearn.preprocessing
 import os
 import env
 
@@ -179,10 +180,32 @@ def split_data(df, random_state=369, stratify=None):
     return train, validate, test
 
 
+# create function that scales train, validate, and test datasets using standardscaler
+def scale_data_standardscaler(train, validate, test):
+    '''
+    This function takes in train, validate, and test data sets, scales them using sklearn's StandardScaler
+    and returns three scaled data sets
+    '''
+    # Create the scaler
+    scaler = sklearn.preprocessing.StandardScaler()
+
+    # Fit scaler on train dataset
+    scaler.fit(train)
+
+    # Transform and rename columns for all three datasets
+    train_scaled = pd.DataFrame(scaler.transform(train), columns = train.columns.tolist())
+    validate_scaled = pd.DataFrame(scaler.transform(validate), columns = train.columns.tolist())
+    test_scaled = pd.DataFrame(scaler.transform(test), columns = train.columns.tolist())
+
+    return train_scaled, validate_scaled, test_scaled
+
 ########## Wrangle ##########
 
 def wrangle_zillow():
     '''This function acquires, cleans, and splits data from the zillow database for exploration'''
+    # acquire, clean, and split
     train, validate, test = split_data(clean_zillow_data(get_zillow_data()))
+    # scale data
+    train_scaled, validate_scaled, test_scaled = scale_data_standardscaler(train, validate, test)
     
-    return train, validate, test
+    return train, validate, test, train_scaled, validate_scaled, test_scaled
