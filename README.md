@@ -1,15 +1,14 @@
-# telco_classification_project
+# zillow_regression_project
 
 ## About the project
 
 ### Project Goals
 
-* To identify drivers of customer churn and find a solution for increasing customer retention
-* To construct a model that accurately predicts which customers are most likely to churn to focus retention efforts
+* To build a model that accurately predicts the property tax assessed values of single family properties that had a transaction during 2017
 
 ### Project Description
 
-Reducing churn is important to the company because lost customers means lost revenue. The cost of acquiring a new customer is much higher than maintaining a customer so this project will attempt to identify strategies that reduce customer churn. In the process, we are also looking for ways to improve customer satisfaction to increase the company's rate of growth.
+Accurately predicting property tax assessed values is important because it provides valuable information to our users and helps predict home values with greater accuracy. The model selected will be evaluated by how well it performs over the baseline and previous models.
 
 ### Initial Hypotheses/Questions
 
@@ -60,23 +59,26 @@ Reducing churn is important to the company because lost customers means lost rev
 * Ask questions/formulate hypotheses
 
 **Acquisition**
-* Create function for establishing connection to telco_churn db
+* Create function for establishing connection to zillow db
 * Create function for SQL query and reading in results
-* Create function caching data
+* Create function for caching data
 * Create acquire.py to save these functions for importing
 * Test functions
+* Get familiar with data
+* Document takeaways & things to address during cleaning 
 
 **Preparation**
 * Create function that cleans data
-  * Change data type for total_charges from object to float
-  * Drop monthly_charges null values where customers have less than a month of tenure therefore no opportunity to churn
-  * Replace all instances of 'No internet service' as that information is in internet_service_type column and doing so simplifies encoding by creating binary values for many of the colums
+  * Convert data types
+  * Handle missing values
+  * -
   * Create dummy variables for columns with object datatype
   * Drop columns that contain duplicate information or are unnecessary
   * Rename columns 
 * Create function that splits data into train, validate, and test samples
   * Split 20% (test), 24% (validate), and 56% (train)
 * Create prepare.py to save these functions for importing
+* Create function that scales the data
 * Test functions
 
 **Exploration**
@@ -95,23 +97,24 @@ Reducing churn is important to the company because lost customers means lost rev
   * Key takeaway is that customers are unhappy with the higher prices associated with fiber optic service and/or the quality of fiber optic service
 
 **Modeling**
-* Train model
-* Make predictions
-* Evaluate model
-* Compute accuracy
+* Identify, select, and create features
+* Establish a baseline
+* Build, fit and use models to make predictions
+* Compute evaluation metrics to evaluate models' performance
+* Select best model and use on test dataset
 
 **Delivery**
 * Report will be in Jupyter Notebook
 * Present via Zoom
-* Audience will be direct manager and their manager
+* Audience will be the Zillow data science team
 
 ### To Recreate This Project:
 * You will need an env file with your database credentials (user, password, hostname) saved to your working directory
 * Create a gitignore and add your env file to prevent your credentials from getting pushed to Github
 * Download the aquire.py and prepare.py files to your working directory
-* Download the telco_classification_project_final notebook to your working directory
+* Download the zillow_regression_project_final notebook to your working directory
 * Read this README.md
-* Run the telco_classification_project_final.ipynb notebook
+* Run the zillow_regression_project_final.ipynb notebook
 
 ### Recommendations and Next Steps
 * Reduce monthly price for fiber optic internet service
