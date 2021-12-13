@@ -106,16 +106,12 @@ def clean_zillow_data(df):
     cols_to_drop = get_cols_with_large_null_percentage(df, 0.35)
 
     # specify more columns to drop that are duplicated, unnecessary, or not useful
-    cols_to_drop.extend(['propertylandusetypeid','id','calculatedbathnbr','finishedsquarefeet12','fullbathcnt','latitude','longitude',
-                        'propertycountylandusecode','rawcensustractandblock','regionidzip','structuretaxvaluedollarcnt','assessmentyear',
-                        'landtaxvaluedollarcnt','taxamount','censustractandblock','id.1','logerror','transactiondate','propertylandusedesc',
+    cols_to_drop.extend(['propertylandusetypeid','id','calculatedbathnbr','finishedsquarefeet12','fullbathcnt','latitude',
+                        'longitude','propertycountylandusecode','rawcensustractandblock','regionidzip','structuretaxvaluedollarcnt','assessmentyear','landtaxvaluedollarcnt','taxamount','censustractandblock','id.1','logerror','transactiondate','propertylandusedesc',
                         'regionidcity','regionidcounty','parcelid','roomcnt'])
 
     # drop columns that are unncessary or have too many null counts
     df = df.drop(columns=cols_to_drop)
-
-    # drop rows with null values
-    df = df.dropna()
 
      # Rename some columns for simplicity
     df = df.rename(columns={'bedroomcnt':'bedrooms','bathroomcnt':'bathrooms','calculatedfinishedsquarefeet':'area',
@@ -124,11 +120,20 @@ def clean_zillow_data(df):
     # create age column based on yearbuilt
     df['age'] = 2021 - df.yearbuilt
 
-    # use a function to remove outliers
-    df = remove_outliers(df,1.5,['bedrooms','bathrooms','area','lot_area','taxvalue','age'])
+    # focus on properties within $200k of Zillow median 2017 home price for CA ($560k)
+    df = df[(df.taxvalue > 360_000) & (df.taxvalue < 760_000)]
 
-    # drop more outliers where area > 3500 or < 500 sq ft and where tax value > $1,500,000 or < $50,000
-    df = df[((df.area < 3500) & (df.area > 500)) & ((df.taxvalue < 1_500_000) & (df.taxvalue > 50_000))]
+    # drop observations with < two or > five bedrooms to focus on largest subset of our users
+    df = df[(df.bedrooms > 1) & (df.bedrooms < 6)]
+
+    # use a function to remove outliers in other columns
+    df = remove_outliers(df,1.25,['bathrooms','area','lot_area','age'])
+
+    # drop more outliers where area
+    df = df[df.area > 750]
+
+    # drop rows with null values
+    df = df.dropna()
     
     # Create list of datatypes I want to change
     int_col_list = ['bedrooms','area','taxvalue','age']
@@ -142,11 +147,13 @@ def clean_zillow_data(df):
             df[col] = df[col].astype(int).astype(object)
 
     # replace fips with city & state for readability
-    df.fips = df.fips.replace({6037:'Los Angeles, CA',6059:'Orange, CA',6111:'Ventura, CA'})
+    df.fips = df.fips.replace({6037:'los_angeles',6059:'orange',6111:'ventura'})
 
     # Encode FIPS column, concatenate onto original dataframe, and drop fips column
     dummy_df = pd.get_dummies(df['fips'])
-    df = pd.concat([df, dummy_df], axis=1).drop(columns='fips')
+    df = pd.concat([df, dummy_df], axis=1)
+
+    df = df.drop(columns=['fips','yearbuilt'])
     
     return df
 
@@ -209,3 +216,30 @@ def wrangle_zillow():
     train_scaled, validate_scaled, test_scaled = scale_data_standardscaler(train, validate, test)
     
     return train, validate, test, train_scaled, validate_scaled, test_scaled
+
+
+def add_county_column(row):
+    if row['los_angeles'] == 1:
+        return 'Los Angeles'
+    elif row['orange'] == 1:
+        return 'Orange'
+    elif row['ventura'] == 1:
+        return 'Ventura'
+
+def append_county_col(df):
+
+    df['county'] = df.apply(lambda row: add_county_column(row), axis = 1)
+    return df
+
+def create_x_y(train, validate, test, train_scaled, validate_scaled, test_scaled):
+    # create X and y version of train, validate, and test
+    X_train = train_scaled.drop(columns=['lot_area','taxvalue','age','los_angeles','orange','ventura'])
+    y_train = pd.DataFrame(train.taxvalue)
+
+    X_validate = validate_scaled.drop(columns=['lot_area','taxvalue','age','los_angeles','orange','ventura'])
+    y_validate = pd.DataFrame(validate.taxvalue)
+
+    X_test = test_scaled.drop(columns=['lot_area','taxvalue','age','los_angeles','orange','ventura'])
+    y_test = pd.DataFrame(test.taxvalue)
+
+    return X_train, y_train, X_validate, y_validate, X_test, y_test
