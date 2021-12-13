@@ -71,30 +71,31 @@ Accurately predicting property tax assessed values is important because it provi
 * Create function that cleans data
   * Convert data types
   * Handle missing values
-  * -
+  * Dropped observations with less than 2 or more than 5 bedrooms or more than $200,000 from the Zillow median home price for California in 2017
+    * This was done to make the process relevant to the largest subset of our users
   * Create dummy variables for columns with object datatype
   * Drop columns that contain duplicate information or are unnecessary
   * Rename columns 
 * Create function that splits data into train, validate, and test samples
   * Split 20% (test), 24% (validate), and 56% (train)
-* Create prepare.py to save these functions for importing
 * Create function that scales the data
 * Test functions
+* Create wrangle.py to save these functions for importing
 
 **Exploration**
 * Ask questions/form hypotheses
-  * Do customers with month-to-month contracts churn more than other contract types?
-  * Is there a tenure length where customers are more likely to churn?
-  * Is a specific internet service type associated with higher churn rates?
-  * Is it higher monthly charges that are causing churn?
+  * Does location affect property tax value?
+  * Does number of bedrooms affect property tax value?
+  * Does number of bathrooms affect property tax value?
+  * What features do have the highest correlation with property tax value?
 * Create visualizations to help identify drivers
 * Use statistical tests to test hypotheses
 * Document answers to questions and takeaways
-  * Month-to-month customers churn at almost 5x the rate of those with contracts.
-  * The largest portion of customers who churn do so within the first 6 months.
-  * Both the chart and test show that fiber optic customers are more likely to churn.
-  * Both the chart and test show that churn is associated with higher monthly charges.
-  * Key takeaway is that customers are unhappy with the higher prices associated with fiber optic service and/or the quality of fiber optic service
+  * Property tax values are somewhat higher for Orange County but otherwise similar.
+  * Even though not visible in the chart, there does appear to be a linear relationship between number of bedrooms and property tax value.
+  * Statistical testing confirms, there does appear to be a linear relationship between number of bathrooms and property tax value.
+  * Area has the highest correlation with property tax value at 0.3 followed by # of bathrooms at 0.23.
+  * Key takeaway is that area, bathrooms, and bedrooms are the key drivers of property tax value
 
 **Modeling**
 * Identify, select, and create features
@@ -111,14 +112,12 @@ Accurately predicting property tax assessed values is important because it provi
 ### To Recreate This Project:
 * You will need an env file with your database credentials (user, password, hostname) saved to your working directory
 * Create a gitignore and add your env file to prevent your credentials from getting pushed to Github
-* Download the aquire.py and prepare.py files to your working directory
+* Download the wrangle.py file to your working directory
 * Download the zillow_regression_project_final notebook to your working directory
 * Read this README.md
 * Run the zillow_regression_project_final.ipynb notebook
 
 ### Recommendations and Next Steps
-* Reduce monthly price for fiber optic internet service
+* Improve methods of data collection so that features that were not used because of null values may be implemented
 
-* Send out quarterly customer satisfaction surveys for better insights
-
-* With more time and resources, would like to collect and explore customer satisfaction data
+* With more time and resources, I would like to conduct more feature engineering and explore the relationships between property tax value and features which initially may not seem important
