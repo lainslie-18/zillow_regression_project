@@ -24,13 +24,13 @@ Accurately predicting property tax assessed values is important because it provi
 
 |   Column_Name   | Description | Type      |
 |   -----------   | ----------- | ---------- |
-| bathrooms | number of bathrooms | float |
-| bedrooms   | numeric representation of internet service type | int64  |
-| area      | numeric representation of contract type  | int64 |
-| lot_area      | number of square feet | int64 |
-| taxvalue   | indicates customer's gender        | int64    | 
-| age      | indicates if customer is senior citizen      | int64 |
-| county   | indicates if customer has a partner       |  object |
+| bathrooms | Number of bathrooms | float |
+| bedrooms   | Number of bedrooms | int64  |
+| area      |  Calculated total finished living area of the home   | int64 |
+| lot_area      |  Area of the lot in square feet | int64 |
+| taxvalue   | The total tax assessed value of the parcel       | int64    | 
+| age      | Years since home was built      | int64 |
+| county   | Los Angeles, Orange, or Ventura Count       |  object |
 
 ### Project Planning
 
